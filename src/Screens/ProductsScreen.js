@@ -10,6 +10,8 @@ const ProductsScreen = ({ navigation }) => {
     const [search, setSearch] = useState('');
     const [filterBooks, setFilteredBooks] = useState([]);
 
+
+
     useEffect(() => {
         const fetchBooks = async () => {
             try {
@@ -45,7 +47,6 @@ const ProductsScreen = ({ navigation }) => {
 
 
     return (
-        <View>
 
             <View style={styles.space}>
                 <View style={styles.searchInputContainer}>
@@ -65,21 +66,15 @@ const ProductsScreen = ({ navigation }) => {
                     renderItem={renderItem}
                     numColumns={2}
                     keyExtractor={(item) => item.id}
-
+                    contentContainerStyle={styles.flatListContent}
                 />
 
-
+                {/* Add to cart button */}
+                <TouchableOpacity onPress={() => navigation.navigate('Create Products')}  style={styles.button}>
+                    <Text style={styles.buttonText}>Upload Products</Text>
+                </TouchableOpacity>
             </View>
 
-
-            {/* Add to cart button */}
-            <TouchableOpacity onPress={() => navigation.navigate('Create Products')}  style={styles.button}>
-                <Text style={styles.buttonText}>Upload Products</Text>
-            </TouchableOpacity>
-
-
-
-        </View>
 
 
     );
@@ -99,7 +94,8 @@ const styles = StyleSheet.create({
 
     },
     space: {
-        marginBottom: 100,
+        flex:1,
+        paddingBottom: 80,
     },
 
     productTitle: {
@@ -148,6 +144,9 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
         fontWeight: 'bold'
+    },
+    flatListContent: {
+        paddingBottom: 100,
     },
 
 

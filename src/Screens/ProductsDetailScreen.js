@@ -3,10 +3,14 @@ import { db } from '../../firebaseConfig';
 import React, { useState, useEffect } from 'react';
 import { query, collection, where, getDocs } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
+import { useCart } from '../context/CartContext';
 
 
 
 const ProductsDetailScreen = () => {
+
+    const { dispatch } = useCart();
+
     const route = useRoute(); // Using useRoute to access the route object
 
     const [product, setProduct] = useState(null);
@@ -35,6 +39,14 @@ const ProductsDetailScreen = () => {
 
         fetchBookDetails();
     }, [route.params.id]); // Using route.params.id as a dependency
+
+    const addToCart = () => {
+        dispatch({
+            type: 'ADD_ITEM',
+            payload: product  // Assuming 'product' holds all the details of your book
+        });
+        alert('Added to cart!');  // Optionally provide user feedback
+    };
 
     /*
     const addToCart = () => {
@@ -79,9 +91,10 @@ const ProductsDetailScreen = () => {
 
 
             {/* Add to cart button */}
-            <TouchableOpacity onPress={() => renderItem}  style={styles.button}>
-                <Text style={styles.buttonText}>Add to cart</Text>
+            <TouchableOpacity onPress={addToCart} style={styles.button}>
+                <Text style={styles.buttonText}>Add to Cart</Text>
             </TouchableOpacity>
+
         </View>
     );
 };

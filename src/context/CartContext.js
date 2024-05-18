@@ -1,40 +1,52 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { collection, getDocs, deleteDoc, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
 const CartContext = createContext();
-const initialState = { items: [] }; // Define initial state of the cart
+const initialState = { items: [] };
 
-const cartReducer = (state = initialState, action) => {
+const cartReducer = (state, action) => {
     switch (action.type) {
+        case 'SET_CART':
+            return { ...state, items: action.payload };
         case 'ADD_ITEM':
-            return { ...state, items: [...state.items, action.payload] };
+            const existingItem = state.items.find(item => item.id === action.payload.id);
+            if (existingItem) {
+                return {
+                    ...state,
+                    items: state.items.map(item =>
+                        item.id === action.payload.id ? { ...item, quantity: item.quantity + action.payload.quantity } : item
+                    )
+                };
+            } else {
+                return { ...state, items: [...state.items, action.payload] };
+            }
         case 'REMOVE_ITEM':
             return { ...state, items: state.items.filter(item => item.id !== action.payload.id) };
         case 'UPDATE_QUANTITY':
             return {
                 ...state,
-                items: state.items.map(item => item.id === action.payload.id ? { ...item, quantity: action.payload.quantity } : item)
+                items: state.items.map(item =>
+                    item.id === action.payload.id ? { ...item, quantity: action.payload.quantity } : item
+                )
             };
         default:
             return state;
     }
 };
 
-// Component that provides cart context
-let CartProvider;
-export default CartProvider = ({ children }) => {
+const CartProvider = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, initialState);
 
-    // Function to load cart from AsyncStorage on startup
-    async function init() {
-        const storedCart = await loadCartFromStorage();
-        return storedCart ? { items: storedCart } : initialState;
-    }
-
-    // Save cart to AsyncStorage whenever it changes
     useEffect(() => {
-        saveCartToStorage(state.items);
-    }, [state.items]);
+        const fetchCart = async () => {
+            const querySnapshot = await getDocs(collection(db, 'cartItems'));
+            const cartItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            dispatch({ type: 'SET_CART', payload: cartItems });
+        };
+
+        fetchCart();
+    }, []);
 
     return (
         <CartContext.Provider value={{ state, dispatch }}>
@@ -43,24 +55,5 @@ export default CartProvider = ({ children }) => {
     );
 };
 
-// Custom hook to use cart context
 export const useCart = () => useContext(CartContext);
-
-// Functions to handle AsyncStorage operations
-const saveCartToStorage = async (items) => {
-    try {
-        const jsonValue = JSON.stringify(items);
-        await AsyncStorage.setItem('cart', jsonValue);
-    } catch (e) {
-        console.error('Failed to save cart', e);
-    }
-};
-
-const loadCartFromStorage = async () => {
-    try {
-        const jsonValue = await AsyncStorage.getItem('cart');
-        return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-        console.error('Failed to load cart', e);
-    }
-};
+export default CartProvider;

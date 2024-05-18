@@ -70,8 +70,8 @@ const ProductsScreen = ({ navigation }) => {
                 />
 
                 {/* Add to cart button */}
-                <TouchableOpacity onPress={() => navigation.navigate('Create Products')}  style={styles.button}>
-                    <Text style={styles.buttonText}>Upload Products</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Manage Products')}  style={styles.button}>
+                    <Text style={styles.buttonText}>Manage Products</Text>
                 </TouchableOpacity>
             </View>
 

@@ -24,8 +24,8 @@ const Nav = () => {
                     )
                 })}
             >
-                <Stack.Screen name="Home" component={ProductsScreen} />
-                <Stack.Screen name="Create Products" component={UploadProduct} />
+                <Stack.Screen name="Library" component={ProductsScreen} />
+                <Stack.Screen name="Manage Products" component={UploadProduct} />
                 <Stack.Screen name="Product Details" component={ProductDetailScreen} />
                 <Stack.Screen name="Cart" component={CartScreen} />
             </Stack.Navigator>

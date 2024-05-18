@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { db } from '../../firebaseConfig';
 import React, { useState, useEffect } from 'react';
-import { query, collection, where, getDocs } from 'firebase/firestore';
+import { query, collection, where, getDocs, addDoc } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
 import { useCart } from '../context/CartContext';
 
@@ -40,13 +40,14 @@ const ProductsDetailScreen = () => {
         fetchBookDetails();
     }, [route.params.id]); // Using route.params.id as a dependency
 
-    const addToCart = () => {
-        dispatch({
-            type: 'ADD_ITEM',
-            payload: product  // Assuming 'product' holds all the details of your book
-        });
-        alert('Added to cart!');  // Optionally provide user feedback
+
+    const addToCart = async () => {
+        const cartItem = { ...product, quantity: 1 };
+        await addDoc(collection(db, 'cartItems'), cartItem);
+        dispatch({ type: 'ADD_ITEM', payload: cartItem });
+        alert('Added to cart!');
     };
+
 
     /*
     const addToCart = () => {

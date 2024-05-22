@@ -1,20 +1,22 @@
 import React from 'react';
-import  CartContextProvider   from './src/context/CartContext';
+import CartContextProvider from './src/context/CartContext';
+import UserProvider from './src/context/UserContext';
 import Nav from './src/Nav';
 import 'react-native-gesture-handler';
-import { StatusBar, Text, View, StyleSheet } from 'react-native';
+import { StatusBar, View, StyleSheet } from 'react-native';
 
 export default function App() {
     return (
-        <CartContextProvider>
-            <View style={{ flex: 1 }}>
-                <StatusBar style="auto" />
-                <Nav />
-            </View>
-        </CartContextProvider>
+        <UserProvider>
+            <CartContextProvider>
+                <View style={{ flex: 1 }}>
+                    <StatusBar style="auto" />
+                    <Nav />
+                </View>
+            </CartContextProvider>
+        </UserProvider>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {

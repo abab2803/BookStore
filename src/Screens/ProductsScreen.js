@@ -79,6 +79,12 @@ const ProductsScreen = ({ navigation }) => {
                 }}
             >
                 <View style={styles.modalView}>
+                    <TouchableOpacity
+                        onPress={() => setModalVisible(false)}
+                        style={styles.closeButton}
+                    >
+                        <Text style={styles.closeButtonText}>Close</Text>
+                    </TouchableOpacity>
                     <ScrollView>
                         {genres.map((genre, index) => (
                             <TouchableOpacity
@@ -209,6 +215,17 @@ const styles = StyleSheet.create({
     },
     flatListContent: {
         paddingBottom: 100,
+    },
+    closeButton: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        backgroundColor: '#FF6347', // Tomato color for the close button
+        marginBottom: 20,
+    },
+    closeButtonText: {
+        color: 'white',
+        fontSize: 16,
     },
 });
 

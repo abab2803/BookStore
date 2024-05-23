@@ -16,7 +16,7 @@ const Nav = () => {
 
     const handleLogout = (navigation) => {
         logout();
-        navigation.navigate('Login');
+        navigation.navigate('Welcome');
     };
 
     return (
@@ -28,7 +28,7 @@ const Nav = () => {
                 }}
             >
                 <Stack.Screen
-                    name="Login"
+                    name="Welcome"
                     component={LoginScreen}
                 />
                 <Stack.Screen

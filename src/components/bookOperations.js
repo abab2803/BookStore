@@ -1,7 +1,7 @@
 import { query, collection, where, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
-// Function to update a bookg
+// Function to update a book
 export const updateBook = async (bookId, newData) => {
     try {
         const q = query(collection(db, 'books'), where('id', '==', bookId));

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, ScrollView, Modal } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 import { FontAwesome, Entypo } from '@expo/vector-icons';
 
@@ -12,26 +12,23 @@ const ProductsScreen = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
-        const fetchBooks = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, 'books'));
-                const booksData = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                setBooks(booksData);
-                setFilteredBooks(booksData);
-            } catch (error) {
-                console.error('Error fetching books:', error);
-            }
-        };
+        const unsubscribe = onSnapshot(collection(db, 'books'), (querySnapshot) => {
+            const booksData = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setBooks(booksData);
+            setFilteredBooks(booksData);
+        }, (error) => {
+            console.error('Error fetching books:', error);
+        });
 
-        fetchBooks();
+        return () => unsubscribe(); // Clean up the listener on unmount
     }, []);
 
     useEffect(() => {
         filterBooks();
-    }, [search, selectedGenre]);
+    }, [search, selectedGenre, books]);
 
     const handleSearch = (text) => {
         setSearch(text);

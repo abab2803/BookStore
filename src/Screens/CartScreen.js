@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { useCart } from '../context/CartContext';
-import { collection, query, where, getDocs, deleteDoc, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, updateDoc, doc, writeBatch } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
 
 const CartScreen = () => {
@@ -50,6 +50,22 @@ const CartScreen = () => {
         return state.items.reduce((total, item) => total + item.quantity * item.price, 0);
     };
 
+    const handleCheckout = async () => {
+        try {
+            const batch = writeBatch(db);
+            const querySnapshot = await getDocs(collection(db, 'cartItems'));
+            querySnapshot.forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+            dispatch({ type: 'SET_CART', payload: [] });
+            Alert.alert('Purchase succeeded', 'Your order has been placed successfully.');
+        } catch (error) {
+            console.error('Error during checkout: ', error);
+            Alert.alert('Checkout failed', 'There was an issue during checkout. Please try again.');
+        }
+    };
+
     return (
         <View style={styles.container}>
             <FlatList
@@ -79,6 +95,9 @@ const CartScreen = () => {
             />
             <View style={styles.totalContainer}>
                 <Text style={styles.total}>Total: ${calculateTotal().toFixed(2)}</Text>
+                <TouchableOpacity onPress={handleCheckout} style={styles.checkoutButton}>
+                    <Text style={styles.checkoutButtonText}>Check-out</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -142,12 +161,21 @@ const styles = StyleSheet.create({
     },
     totalContainer: {
         paddingVertical: 10,
+        alignItems: 'center',
     },
     total: {
         fontSize: 18,
         fontWeight: 'bold',
-        textAlign: 'center',
-        marginTop: 20,
+        marginVertical: 20,
+    },
+    checkoutButton: {
+        backgroundColor: '#28a745',
+        padding: 10,
+        borderRadius: 5,
+    },
+    checkoutButtonText: {
+        color: 'white',
+        fontSize: 18,
     },
 });
 

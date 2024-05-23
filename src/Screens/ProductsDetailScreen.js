@@ -1,24 +1,20 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { db } from '../../firebaseConfig';
 import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { query, collection, where, getDocs, addDoc } from 'firebase/firestore';
-import { useRoute } from '@react-navigation/native';
+import { db } from '../../firebaseConfig';
 import { useCart } from '../context/CartContext';
 
-
-
 const ProductsDetailScreen = () => {
-
     const { dispatch } = useCart();
-
-    const route = useRoute(); // Using useRoute to access the route object
-
+    const route = useRoute();
+    const navigation = useNavigation();
     const [product, setProduct] = useState(null);
 
     useEffect(() => {
         const fetchBookDetails = async () => {
             try {
-                const idParam = route.params.id; // Accessing the id parameter from the route
+                const idParam = route.params.id;
                 const q = query(collection(db, 'books'), where('id', '==', idParam));
                 const querySnapshot = await getDocs(q);
 
@@ -38,8 +34,7 @@ const ProductsDetailScreen = () => {
         };
 
         fetchBookDetails();
-    }, [route.params.id]); // Using route.params.id as a dependency
-
+    }, [route.params.id]);
 
     const addToCart = async () => {
         const cartItem = { ...product, quantity: 1 };
@@ -48,12 +43,6 @@ const ProductsDetailScreen = () => {
         alert('Added to cart!');
     };
 
-
-    /*
-    const addToCart = () => {
-        console.warn('It is Added Boss :)');
-    };
-        */
     if (!product) {
         return (
             <View style={styles.container}>
@@ -62,59 +51,52 @@ const ProductsDetailScreen = () => {
         );
     }
 
-    const renderItem=({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('Add Carts', {id: item.id,})} style={styles.itemContainer}>
-            <Image source={{ uri: item.image }} style={styles.image} />
-            <Text style={styles.productTitle}>{item.title}</Text>
-        </TouchableOpacity>
-    );
-
-
-    return(
-        <View>
+    return (
+        <View style={styles.container}>
             <ScrollView>
-                {/* Image */}
                 <Image source={{ uri: product.image }} style={styles.productImage} />
                 <View style={{ padding: 20 }}>
-                    {/* Author */}
                     <Text style={styles.author}>By {product.author}</Text>
-                    {/* Title */}
                     <Text style={styles.title}>{product.title}</Text>
-                    {/* Price */}
                     <Text style={styles.price}>${product.price}</Text>
-                    {/* Genre */}
                     <Text style={styles.genre}>• {product.genre} </Text>
-                    {/* Description */}
                     <Text style={styles.description}>{product.description}{'\n\n\n'}</Text>
                 </View>
             </ScrollView>
-
-
-
-            {/* Add to cart button */}
             <TouchableOpacity onPress={addToCart} style={styles.button}>
                 <Text style={styles.buttonText}>Add to Cart</Text>
             </TouchableOpacity>
-
         </View>
     );
+};
+
+ProductsDetailScreen.navigationOptions = ({ navigation }) => {
+    return {
+        headerLeft: () => (
+            <Button
+                onPress={() => navigation.goBack()}
+                title="Back"
+                color="#000"
+            />
+        ),
+    };
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     productImage: {
         width: "75%",
         aspectRatio: 1,
         marginTop: 80,
         marginBottom: 4,
-        alignSelf: 'center', // Center horizontally
+        alignSelf: 'center',
     },
     author: {
-        // Add author styles
+        fontSize: 16,
+        fontWeight: '500',
+        marginVertical: 5,
     },
     title: {
         fontSize: 30,
@@ -143,7 +125,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         bottom: 35,
         width: '85%',
-        alignSelf: 'center', // Center horizontally
+        alignSelf: 'center',
         padding: 20,
         borderRadius: 80,
         alignItems: "center",

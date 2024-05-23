@@ -159,8 +159,8 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         flex: 1,
-        height: '100%', // Match the height of the container
-        paddingLeft: 30, // Leave space for the icon
+        height: '100%',
+        paddingLeft: 30,
     },
     searchIcon: {
         position: 'absolute',
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         bottom: 35,
         width: '85%',
-        alignSelf: 'center', // Center horizontally
+        alignSelf: 'center',
         padding: 20,
         borderRadius: 80,
         alignItems: "center",
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
-        backgroundColor: '#FF6347', // Tomato color for the close button
+        backgroundColor: '#FF6347',
         marginBottom: 20,
     },
     closeButtonText: {
